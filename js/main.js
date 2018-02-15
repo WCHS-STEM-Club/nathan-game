@@ -15,46 +15,35 @@ const camera = new THREE.PerspectiveCamera(
     1,
     1000
 );
-const box = new Physijs.BoxMesh(
-    new THREE.CubeGeometry( 5, 5, 5 ),
-    new THREE.MeshBasicMaterial({ color: 0x888888 })
+const light = new THREE.PointLight(0xffffff);
+
+const floor = new THREE.Mesh(
+    new THREE.BoxGeometry(10, 5, 1),
+    new THREE.MeshLambertMaterial({
+        color: 0x00ff00
+    })
 );
 
 function initScene() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    camera.position.set(0, 0, 5);
+    light.position.set(10, 1, 10);
+    scene.add(light);
+
+    floor.position.y = -3;
+    scene.add(floor);
+
+    camera.position.set(0, 0, 20);
     scene.add(camera);
-    scene.add( box );
 
-    requestAnimationFrame(render);
+    animate();
 }
-
-const floorGeo = new THREE.BoxGeometry(10, 5, 1);
-let material = new THREE.MeshLambertMaterial({
-    color: 0x00ff00
-});
-let floor = new THREE.Mesh(floorGeo, material);
-scene.add(floor);
-
-const light =
-    new THREE.PointLight(0xffffff);
-
-// set its position
-light.position.x = 10;
-light.position.z = 10;
-light.position.y = 1;
-
-// add to the scene
-scene.add(light);
-
-floor.position.y = -3;
-
-camera.position.z = 5;
 
 let player = new Player(scene);
 player.v.x = 1;
+
+initScene();
 
 function animate() {
     requestAnimationFrame(animate);
@@ -64,7 +53,7 @@ function animate() {
     light.position.x = player.pos.x + 10;
     renderer.render(scene, camera);
 }
-animate();
+// animate();
 
 window.addEventListener("keydown", (e) => {
     const UP = 38;
