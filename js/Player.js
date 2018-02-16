@@ -7,8 +7,9 @@ class Player {
     constructor(scene) {
         this.state = PlayerStates.ON_GROUND;
 
-        this.pos = new THREE.Vector3(0, 0, 0); // Position
-        this.v = new THREE.Vector3(0, 0, 0); // Velocity
+        this.pos = new THREE.Vector3(0, 5, 0); // Position
+
+        this.physics = Matter.Bodies.rectangle(0, 5, 1, 1);
 
         const geometry = new THREE.BoxGeometry(1, 1, 1);
         const material = new THREE.MeshLambertMaterial({
@@ -19,21 +20,19 @@ class Player {
         scene.add(this.mesh);
     }
 
-    calcNewPos() {
-        this.v.multiplyScalar(friction);
-        this.pos.addVectors(this.pos, this.v);
-        if (this.pos.y < 0) {
-            this.pos.y = 0;
-            this.state = PlayerStates.ON_GROUND;
-        } else if (this.pos.y > 0) {
-            this.v.y -= gravity;
-            this.state = PlayerStates.IN_AIR;
-        }
-    }
+    sync() {
+        this.pos.x = this.physics.position.x;
+        this.pos.y = this.physics.position.y;
 
-    syncMesh() {
         this.mesh.position.x = this.pos.x;
         this.mesh.position.y = this.pos.y;
-        this.mesh.position.z = this.pos.z;
+    }
+
+    setState() {
+        if (this.physics.velocity.y === 0) {
+            this.state = PlayerStates.ON_GROUND;
+        } else {
+            this.state = PlayerStates.IN_AIR;
+        }
     }
 }
