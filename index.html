@@ -1,15 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Race</title>
+    <title>Balls Matter</title>
     <link rel="stylesheet" href="style.css"/>
+    <meta charset="UTF-8"/>
 </head>
 <body>
-<script src="js/three.js"></script>
+<canvas tabindex="0" id="world"></canvas>
+<div id="editor">
+    <form>
+        <div><code>// World</code></div>
+        <div><code>var gravity = <input title="gravity" id="gravity" type="number"
+                                        value="0.1"
+                                        step="0.1"
+                                        min="-1"
+                                        max="1"
+        />;</code></div>
+        <div><code>var airThickness = <input title="airThickness" id="airThickness" type="number"
+                                        value="0.01"
+                                        step="0.01"
+                                        min="0"
+                                        max="1"
+        />;</code></div>
+        <br/>
+        <div><code>// Player</code></div>
+        <div><code>var jumpPower = <input title="jumpPower" id="jumpPower" type="number"
+                                          value="2"
+                                          step="0.5"
+                                          min="0"
+                                          max="10"
+        />;</code></div>
+        <div><code>var movePower = <input title="movePower" id="movePower" type="number"
+                                          value="0.5"
+                                          step="0.1"
+                                          min="0"
+                                          max="2"
+        />;</code></div>
+        <div><code>var bounciness = <input title="bounciness" id="bounciness" type="number"
+                                          value="0.1"
+                                          step="0.1"
+                                          min="0"
+                                          max="1"
+        />;</code></div>
+        <div><code>var friction = <input title="friction" id="friction" type="number"
+                                          value="0.2"
+                                          step="0.1"
+                                          min="0"
+                                          max="1"
+        />;</code></div>
+    </form>
+</div>
 <script src="js/matter.min.js"></script>
-<script src="js/Player.js"></script>
-<script src="js/Ground.js"></script>
-<script src="js/main.js"></script>
+<script src="js/script.js"></script>
+<script src="js/manageForm.js"></script>
 </body>
 </html>

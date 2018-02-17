@@ -1,10 +1,25 @@
-html, body, canvas {
-    margin: 0;
-    padding: 0;
+#editor {
+    box-sizing: border-box;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 33%;
+    border: 1px solid black;
+    padding: 5px;
 }
 
-canvas {
+#world {
+    box-sizing: border-box;
     position: absolute;
-    width: 100%;
+    left: 0;
+    top: 0;
     height: 100%;
+    width: 67%;
+}
+div {
+    margin: 1px;
+}
+html {
+    overflow: hidden;
 }
