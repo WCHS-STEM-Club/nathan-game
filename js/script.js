@@ -10,6 +10,8 @@ let world;
 let player;
 
 let playerOnGround = false;
+let won = false;
+let floors;
 
 const UP = 38;
 const DOWN = 40;
@@ -48,12 +50,14 @@ window.addEventListener("load", function() {
         frictionAir: airThicknessInput.value,
         restitution: bouncinessInput.value,
         render: {
-            fillStyle: "#F35e66",
+            fillStyle: "#f35e66",
             strokeStyle: "black",
             lineWidth: 1
         }
     });
     Matter.World.add(world, player);
+
+    const canvasWidth = canvas.width;
 
     const floor = Matter.Bodies.rectangle(window.innerWidth / 3, window.innerHeight - 20, window.innerWidth * 2 / 3, 40, {
         isStatic: true, //An immovable object
@@ -71,16 +75,27 @@ window.addEventListener("load", function() {
     });
     Matter.World.add(world, [wall1, wall2]);
 
-    const platform1 = Matter.Bodies.rectangle(100, window.innerHeight / 20 * 17, 100, 3, {
+    const platform1 = Matter.Bodies.rectangle(canvasWidth / 4, window.innerHeight / 20 * 17, 100, 3, {
         isStatic: true
     });
-    const platform2 = Matter.Bodies.rectangle(400, window.innerHeight / 20 * 17, 100, 3, {
+    const platform2 = Matter.Bodies.rectangle(canvasWidth / 4 * 2, window.innerHeight / 20 * 13, 100, 3, {
         isStatic: true
     });
-    const platform3 = Matter.Bodies.rectangle(700, window.innerHeight / 20 * 17, 100, 3, {
+    const platform3 = Matter.Bodies.rectangle(canvasWidth / 4 * 3, window.innerHeight / 20 * 9, 100, 3, {
         isStatic: true
     });
     Matter.World.add(world, [platform1, platform2, platform3]);
+
+    floors = [floor, platform1, platform2, platform3];
+
+    const goal = Matter.Bodies.rectangle(canvasWidth / 10 * 9, canvasWidth / 10, canvasWidth / 10, canvasWidth / 10, {
+        isSensor: true,
+        isStatic: true,
+        render: {
+            fillStyle: "#00FF00"
+        }
+    });
+    Matter.World.add(world, goal);
 
     //Start the engine
     const runner = Matter.Runner.create();
@@ -100,39 +115,29 @@ window.addEventListener("load", function() {
         }
     });
 
-    Matter.Events.on(engine, "collisionStart", (e) => {
-        const pairs = e.pairs;
-
-        playerOnGround = true;
-
-        // pairs.forEach((pair) => {
-        //     let groundInvolved = isInvolved(floor, pair);
-        //     let playerInvolved = isInvolved(player, pair);
-        //     let platform1Involved = isInvolved(platform1, pair);
-        //
-        //     if (groundInvolved && playerInvolved) {
-        //         playerOnGround = true;
-        //     }
-        // });
-    });
-
     Matter.Events.on(engine, "collisionActive", (e) => {
-        playerOnGround = true;
+        const pairs = e.pairs;
+        let groundInvolved = false;
+        let playerInvolved = false;
+
+        pairs.forEach((pair) => {
+            floors.forEach((item) => {
+                if (isInvolved(item, pair)) {
+                    groundInvolved = true;
+                }
+            });
+
+            if (isInvolved(goal, pair)) {
+                won = true;
+                document.body.innerHTML = "<h1>You win!</h1>";
+            }
+        });
+
+        playerOnGround = groundInvolved;
     });
 
-    Matter.Events.on(engine, "collisionEnd", (e) => {
-        const pairs = e.pairs;
-
+    Matter.Events.on(engine, "collisionEnd", () => {
         playerOnGround = false;
-
-        // pairs.forEach((pair) => {
-        //     let groundInvolved = isInvolved(floor, pair);
-        //     let playerInvolved = isInvolved(player, pair);
-        //
-        //     if (groundInvolved && playerInvolved) {
-        //         playerOnGround = false;
-        //     }
-        // });
     });
 
     function isInvolved(target, pair) {
@@ -141,24 +146,6 @@ window.addEventListener("load", function() {
 
     canvas.addEventListener("keydown", (e) => {
         keys[e.keyCode] = true;
-        //
-        //
-        //
-        //
-        //
-        // switch (e.keyCode) {
-        //     case UP:
-        //         if (playerOnGround) {
-        //             Matter.Body.applyForce(player, player.position, {x: 0, y: -jumpPowerInput.value});
-        //         }
-        //         break;
-        //     case LEFT:
-        //         Matter.Body.applyForce(player, player.position, {x: -movePowerInput.value, y: 0});
-        //         break;
-        //     case RIGHT:
-        //         Matter.Body.applyForce(player, player.position, {x: movePowerInput.value, y: 0});
-        //         break;
-        // }
     });
     canvas.addEventListener("keyup", (e) => {
         keys[e.keyCode] = false;
